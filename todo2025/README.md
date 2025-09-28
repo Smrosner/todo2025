@@ -2,7 +2,7 @@
 
 A modern todo application built with React, TypeScript, and SQLite.
 
-![Todo2025 Demo](/yata-toddo-Sep-27-2025%2021-38-02.gif)
+![Todo2025 Demo](./public/todo2025-demo.gif)
 
 ## Tech Stack
 
