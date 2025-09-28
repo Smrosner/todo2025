@@ -1,69 +1,129 @@
-# React + TypeScript + Vite
+# Todo2025
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern todo application built with React, TypeScript, and SQLite.
 
-Currently, two official plugins are available:
+![Todo2025 Demo](/yata-toddo-Sep-27-2025%2021-38-02.gif)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## Expanding the ESLint configuration
+### Frontend
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- TypeScript 5.8
+- Vite 7
+- TailwindCSS 3.4
+- DaisyUI 5.1
+- FontAwesome Icons 7.0
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- Node.js with Express
+- TypeScript
+- Better-SQLite3
+- Jest for testing
+- Morgan for logging
+- CORS enabled
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Prerequisites
+
+- Node.js (Latest LTS version recommended)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+
+1. Install frontend dependencies:
+
+```bash
+cd todo2025
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. Install backend dependencies:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd server
+npm install
 ```
+
+### Running the Application
+
+#### Starting the Frontend
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+#### Starting the Backend
+
+Run the development server:
+
+```bash
+cd server
+npm run dev
+```
+
+Build for production:
+
+```bash
+cd server
+npm run build
+npm start
+```
+
+### Running Tests
+
+Run backend tests:
+
+```bash
+cd server
+npm test
+```
+
+## Project Structure
+
+```plaintext
+todo2025/
+├── src/                  # Frontend source code
+│   ├── actions/         # Frontend actions
+│   ├── services/        # API services
+│   ├── lib/             # Shared utilities
+│   └── assets/          # Static assets
+├── server/              # Backend source code
+│   ├── src/
+│   │   ├── config/     # Database configuration
+│   │   ├── controllers/# Route controllers
+│   │   ├── models/     # Data models
+│   │   ├── routes/     # API routes
+│   │   └── migrations/ # Database migrations
+│   └── db/             # SQLite database files
+```
+
+## Features
+
+- Create, read, update, and delete todos
+- SQLite database for persistent storage
+- Type-safe frontend and backend
+- Modern UI with TailwindCSS and DaisyUI
+- Comprehensive test coverage
+
+## ESLint Configuration
+
+The project uses a modern ESLint setup with TypeScript support. The configuration includes:
+
+- Type-aware lint rules
+- React-specific linting
+- Strict TypeScript checks
+
+For more details on the ESLint configuration, see the `eslint.config.js` file.
