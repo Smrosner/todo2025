@@ -19,4 +19,7 @@ router.put("/:id", updateTodo);
 
 router.delete("/:id", deleteTodo);
 
+// Add route for toggling todo completion status
+router.put("/:id/toggle", updateTodo);
+
 export default router;

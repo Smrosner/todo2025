@@ -1,68 +1,51 @@
-import { EditIcon, DeleteIcon } from "./lib/icons";
-import { useState } from "react";
+import {
+  EditIcon,
+  DeleteIcon,
+  CheckboxEmptyIcon,
+  CheckboxCheckedIcon,
+} from "./lib/icons";
 import { todoService } from "./services/todoService";
 
 interface Todo {
   id: number;
   text: string;
+  completed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const List = ({
   todos,
   setTodos,
+  handleStartEdit,
+  handleSaveEdit,
+  handleCancelEdit,
+  isUpdating,
+  editText,
+  setEditText,
+  error,
+  setError,
+  editingId,
 }: {
   todos: Todo[];
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  handleStartEdit: (todo: Todo) => void;
+  handleSaveEdit: () => void;
+  handleCancelEdit: () => void;
+  isUpdating: boolean;
+  editText: string;
+  setEditText: React.Dispatch<React.SetStateAction<string>>;
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  editingId: number | null;
 }) => {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editText, setEditText] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  const handleStartEdit = (todo: Todo) => {
-    setEditingId(todo.id);
-    setEditText(todo.text);
-  };
-
-  const handleSaveEdit = async () => {
-    if (editingId !== null && editText.trim()) {
-      const updatedText = editText.trim();
-      setIsUpdating(true);
-
-      try {
-        setTodos(
-          todos.map((t) =>
-            t.id === editingId ? { ...t, text: updatedText } : t
-          )
-        );
-
-        await todoService.update(editingId, updatedText);
-
-        setEditingId(null);
-        setEditText("");
-        setError(null);
-      } catch (err) {
-        setTodos(todos);
-        setError(err instanceof Error ? err.message : "An error occurred");
-        console.error("Error updating todo:", err);
-      } finally {
-        setIsUpdating(false);
-      }
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditText("");
-  };
-
   return (
     <div className="grid gap-4 w-full max-w-2xl mx-auto px-4">
       {error && (
         <div className="alert alert-error">
           <span>{error}</span>
           <button
-            onClick={() => setError(null)}
+            onClick={() => setError(null)} // setError
             className="btn btn-sm btn-ghost"
           >
             Dismiss
@@ -75,6 +58,28 @@ export const List = ({
           className="card bg-base-100 shadow-xl w-full min-w-[300px]"
         >
           <div className="card-body p-4 flex-row justify-between items-center">
+            <button
+              className="p-3 text-xl hover:opacity-70 cursor-pointer mr-2"
+              onClick={async () => {
+                try {
+                  const updatedTodo = await todoService.toggleComplete(
+                    todo.id,
+                    !todo.completed
+                  );
+                  setTodos(
+                    todos.map((t) => (t.id === todo.id ? updatedTodo : t))
+                  );
+                } catch (err) {
+                  setError(
+                    err instanceof Error
+                      ? err.message
+                      : "Failed to toggle todo status"
+                  );
+                }
+              }}
+            >
+              {todo.completed ? <CheckboxCheckedIcon /> : <CheckboxEmptyIcon />}
+            </button>
             {editingId === todo.id ? (
               <input
                 type="text"
@@ -92,23 +97,29 @@ export const List = ({
                 autoFocus
               />
             ) : (
-              <p className="card-title text-lg m-0 break-words flex-1 mr-4 flex items-center min-h-[24px]">
+              <p
+                className={`card-title text-lg m-0 break-words flex-1 mr-4 flex items-center min-h-[24px] ${
+                  todo.completed ? "line-through text-gray-500" : ""
+                }`}
+              >
                 {todo.text}
               </p>
             )}
             <div className="flex gap-2">
               <button
-                className={`btn btn-circle btn-sm btn-neutral ${
-                  isUpdating ? "opacity-50 cursor-not-allowed" : ""
+                className={`btn btn-circle btn-sm ${
+                  isUpdating || editingId !== null
+                    ? "opacity-50 cursor-not-allowed bg-gray-300"
+                    : "bg-gray-500 hover:bg-gray-600"
                 }`}
                 onClick={() => handleStartEdit(todo)}
-                disabled={isUpdating}
+                disabled={isUpdating || editingId !== null}
               >
                 <EditIcon />
               </button>
               <button
                 onClick={() => setTodos(todos.filter((t) => t.id !== todo.id))}
-                className="btn btn-circle btn-sm btn-error"
+                className="btn btn-circle btn-sm bg-red-800 hover:bg-red-900 border-none"
               >
                 <DeleteIcon />
               </button>

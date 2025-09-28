@@ -1,5 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import {
+  faPenToSquare,
+  faSquare,
+  faSquareCheck,
+} from "@fortawesome/free-regular-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { icons } from "./iconTypes";
 import type { IconName } from "./iconTypes";
@@ -28,4 +32,16 @@ export const Icon = ({
 
 export const DeleteIcon = ({ className, onClick }: IconProps) => (
   <FontAwesomeIcon icon={faXmark} className={className} onClick={onClick} />
+);
+
+export const CheckboxEmptyIcon = ({ className, onClick }: IconProps) => (
+  <FontAwesomeIcon icon={faSquare} className={className} onClick={onClick} />
+);
+
+export const CheckboxCheckedIcon = ({ className, onClick }: IconProps) => (
+  <FontAwesomeIcon
+    icon={faSquareCheck}
+    className={className}
+    onClick={onClick}
+  />
 );
