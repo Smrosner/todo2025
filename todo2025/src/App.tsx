@@ -5,10 +5,10 @@ import { todoService } from "./services/todoService";
 
 interface Todo {
   id: number;
-  text: string;
+  title: string;
   completed: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: string;
+  updated_at: string;
 }
 
 function App() {
@@ -40,10 +40,10 @@ function App() {
           ...prevTodos,
           {
             id: tempId,
-            text: trimmedText,
+            title: trimmedText,
             completed: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           },
         ]);
         setTodo("");
@@ -59,7 +59,7 @@ function App() {
         setError(err instanceof Error ? err.message : "Failed to create todo");
         setTodos(
           (prevTodos) =>
-            prevTodos.filter((t) => t.text !== trimmedText) as Todo[]
+            prevTodos.filter((t) => t.title !== trimmedText) as Todo[]
         );
         setTodo(trimmedText);
       } finally {
@@ -70,7 +70,7 @@ function App() {
 
   const handleStartEdit = (todo: Todo) => {
     setEditingId(todo.id);
-    setEditText(todo.text);
+    setEditText(todo.title);
   };
 
   const handleSaveEdit = async () => {
@@ -81,7 +81,7 @@ function App() {
       try {
         setTodos(
           todos.map((t) =>
-            t.id === editingId ? { ...t, text: updatedText } : t
+            t.id === editingId ? { ...t, title: updatedText } : t
           ) as Todo[]
         );
 
@@ -103,6 +103,16 @@ function App() {
   const handleCancelEdit = () => {
     setEditingId(null);
     setEditText("");
+  };
+
+  const handleDelete = async (todoId: number) => {
+    try {
+      await todoService.delete(todoId);
+      setTodos(todos.filter((t) => t.id !== todoId));
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete todo");
+    }
   };
 
   return (
@@ -130,6 +140,7 @@ function App() {
           error={error}
           setError={setError}
           editingId={editingId}
+          handleDelete={handleDelete}
         />
       </div>
     </div>

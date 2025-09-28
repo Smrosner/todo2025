@@ -1,22 +1,22 @@
 interface Todo {
   id: number;
-  text: string;
+  title: string;
   completed: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: string;
+  updated_at: string;
 }
 
 const API_BASE_URL = "http://localhost:3003/api/todos";
 
 export const todoService = {
-  async create(text: string): Promise<Todo> {
+  async create(title: string): Promise<Todo> {
     try {
       const response = await fetch(API_BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ title }),
       });
 
       if (!response.ok) {
@@ -44,14 +44,14 @@ export const todoService = {
     return await response.json();
   },
 
-  async update(id: number, text: string): Promise<Todo> {
+  async update(id: number, title: string): Promise<Todo> {
     try {
       const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ title }),
       });
 
       if (!response.ok) {

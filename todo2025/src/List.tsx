@@ -8,10 +8,10 @@ import { todoService } from "./services/todoService";
 
 interface Todo {
   id: number;
-  text: string;
+  title: string;
   completed: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: string;
+  updated_at: string;
 }
 
 export const List = ({
@@ -26,6 +26,7 @@ export const List = ({
   error,
   setError,
   editingId,
+  handleDelete,
 }: {
   todos: Todo[];
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
@@ -38,6 +39,7 @@ export const List = ({
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   editingId: number | null;
+  handleDelete: (todoId: number) => Promise<void>;
 }) => {
   return (
     <div className="grid gap-4 w-full max-w-2xl mx-auto px-4">
@@ -102,7 +104,7 @@ export const List = ({
                   todo.completed ? "line-through text-gray-500" : ""
                 }`}
               >
-                {todo.text}
+                {todo.title}
               </p>
             )}
             <div className="flex gap-2">
@@ -118,7 +120,7 @@ export const List = ({
                 <EditIcon />
               </button>
               <button
-                onClick={() => setTodos(todos.filter((t) => t.id !== todo.id))}
+                onClick={() => handleDelete(todo.id)}
                 className="btn btn-circle btn-sm bg-red-800 hover:bg-red-900 border-none"
               >
                 <DeleteIcon />

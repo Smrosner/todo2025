@@ -1,66 +1,89 @@
 import { Request, Response } from "express";
-import { Todo, todos } from "../models/Todo.js";
+import { Todo, TodoModel } from "../models/Todo.js";
 
-export const getTodos = (req: Request, res: Response) => {
-  res.json(todos);
+// Type for creating/updating todos
+interface TodoInput {
+  title?: string;
+  completed?: boolean;
+}
+
+export const getTodos = async (req: Request, res: Response) => {
+  try {
+    const todos = await TodoModel.getAll();
+    res.json(todos);
+  } catch (error) {
+    console.error("Error fetching todos:", error);
+    res.status(500).json({ error: "Failed to fetch todos" });
+  }
 };
 
-export const createTodo = (req: Request, res: Response) => {
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: "Text is required" });
-  }
+export const createTodo = async (req: Request, res: Response) => {
+  try {
+    const { title } = req.body as TodoInput;
 
-  const newTodo: Todo = {
-    id: Date.now(),
-    text,
-    completed: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-  todos.push(newTodo);
-  res.status(201).json(newTodo);
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+
+    const newTodo = await TodoModel.create(title);
+    res.status(201).json(newTodo);
+  } catch (error) {
+    console.error("Error creating todo:", error);
+    res.status(500).json({ error: "Failed to create todo" });
+  }
 };
 
-export const getTodoById = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const todo = todos.find((todo) => todo.id === Number(id));
+export const getTodoById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const todo = await TodoModel.getById(Number(id));
 
-  if (!todo) {
-    return res.status(404).json({ error: "Todo not found" });
+    if (!todo) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+
+    res.json(todo);
+  } catch (error) {
+    console.error("Error fetching todo:", error);
+    res.status(500).json({ error: "Failed to fetch todo" });
   }
-
-  res.json(todo);
 };
 
-export const updateTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { text, completed } = req.body;
+export const updateTodo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body as TodoInput;
 
-  const todoIndex = todos.findIndex((todo) => todo.id === Number(id));
+    // Ensure at least one valid field is being updated
+    if (!updates.title && typeof updates.completed !== "boolean") {
+      return res.status(400).json({ error: "No valid update fields provided" });
+    }
 
-  if (todoIndex === -1) {
-    return res.status(404).json({ error: "Todo not found" });
+    const updatedTodo = await TodoModel.update(Number(id), updates);
+
+    if (!updatedTodo) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+
+    res.json(updatedTodo);
+  } catch (error) {
+    console.error("Error updating todo:", error);
+    res.status(500).json({ error: "Failed to update todo" });
   }
-
-  todos[todoIndex] = {
-    ...todos[todoIndex],
-    text: text ?? todos[todoIndex].text,
-    completed: completed ?? todos[todoIndex].completed,
-    updatedAt: new Date(),
-  };
-
-  res.json(todos[todoIndex]);
 };
 
-export const deleteTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const todoIndex = todos.findIndex((todo) => todo.id === Number(id));
+export const deleteTodo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deleted = await TodoModel.delete(Number(id));
 
-  if (todoIndex === -1) {
-    return res.status(404).json({ error: "Todo not found" });
+    if (!deleted) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting todo:", error);
+    res.status(500).json({ error: "Failed to delete todo" });
   }
-
-  todos.splice(todoIndex, 1);
-  res.status(204).send();
 };
